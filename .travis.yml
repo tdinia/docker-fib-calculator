@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t timdinia/react-tests -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true timdinia/react-tests yarn test
+
+after_success:
+  - docker build -t timdinia/multi-client ./client
+  - docker build -t timdinia/multi-nginx ./nginx
+  - docker build -t timdinia/multi-server ./server
+  - docker build -t timdinia/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to docker hub
+  - docker push timdinia/multi-client
+  - docker push timdinia/multi-nginx
+  - docker push timdinia/multi-server
+  - docker push timdinia/multi-worker
