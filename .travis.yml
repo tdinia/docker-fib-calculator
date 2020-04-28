@@ -20,3 +20,16 @@ after_success:
   - docker push timdinia/multi-nginx
   - docker push timdinia/multi-server
   - docker push timdinia/multi-worker
+
+deploy:
+  edge: true
+  provider: elasticbeanstalk
+  region: eu-west-3
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-eu-west-3-209313652649
+  bucket_path: multi-docker
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
